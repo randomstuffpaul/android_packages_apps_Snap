@@ -500,6 +500,8 @@ public class VideoModule implements CameraModule,
 
         mPreferences.setLocalId(mActivity, mCameraId);
         CameraSettings.upgradeLocalPreferences(mPreferences.getLocal());
+        // we need to reset exposure for the preview
+        resetExposureCompensation();
 
         mOrientationManager = new OrientationManager(mActivity);
 
@@ -1059,6 +1061,16 @@ public class VideoModule implements CameraModule,
                 ". mDesiredPreviewHeight=" + mDesiredPreviewHeight);
     }
 
+    private void resetExposureCompensation() {
+        String value = mPreferences.getString(CameraSettings.KEY_EXPOSURE,
+                CameraSettings.EXPOSURE_DEFAULT_VALUE);
+        if (!CameraSettings.EXPOSURE_DEFAULT_VALUE.equals(value)) {
+            Editor editor = mPreferences.edit();
+            editor.putString(CameraSettings.KEY_EXPOSURE, "0");
+            editor.apply();
+        }
+    }
+
     void setPreviewFrameLayoutCameraOrientation(){
         CameraInfo info = CameraHolder.instance().getCameraInfo()[mCameraId];
 
@@ -1112,6 +1124,7 @@ public class VideoModule implements CameraModule,
         if(mWasMute != mIsMute) {
             setMute(mIsMute, false);
         }
+        resetExposureCompensation();
         initializeVideoControl();
         showVideoSnapshotUI(false);
         installIntentFilter();
@@ -2614,6 +2627,15 @@ public class VideoModule implements CameraModule,
         Log.e(TAG,"Video dimension in App->"+recordSize);
         if (CameraUtil.isSupported(mParameters, "video-size")) {
             mParameters.set("video-size", recordSize);
+        }
+        // Set exposure compensation
+        int value = CameraSettings.readExposure(mPreferences);
+        int max = mParameters.getMaxExposureCompensation();
+        int min = mParameters.getMinExposureCompensation();
+        if (value >= min && value <= max) {
+            mParameters.setExposureCompensation(value);
+        } else {
+            Log.w(TAG, "invalid exposure range: " + value);
         }
         // Set white balance parameter.
         String whiteBalance = mPreferences.getString(
