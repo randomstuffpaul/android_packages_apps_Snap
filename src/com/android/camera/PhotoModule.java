@@ -596,6 +596,9 @@ public class PhotoModule
         // Power shutter
         mActivity.initPowerShutter(mPreferences);
 
+        // Max brightness
+        mActivity.initMaxBrightness(mPreferences);
+
         if (mOpenCameraThread == null) {
             mOpenCameraThread = new OpenCameraThread();
             mOpenCameraThread.start();
@@ -2836,6 +2839,9 @@ public class PhotoModule
         // Load the power shutter
         mActivity.initPowerShutter(mPreferences);
 
+        // Load max brightness
+        mActivity.initMaxBrightness(mPreferences);
+
         mNamedImages = null;
 
         if (mLocationManager != null) mLocationManager.recordLocation(false);
@@ -4939,6 +4945,7 @@ public class PhotoModule
             mUI.updateOnScreenIndicators(mParameters, mPreferenceGroup,
                 mPreferences);
             mActivity.initPowerShutter(mPreferences);
+            mActivity.initMaxBrightness(mPreferences);
         } else {
             mHandler.sendEmptyMessage(SET_PHOTO_UI_PARAMS);
         }
