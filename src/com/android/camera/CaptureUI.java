@@ -671,10 +671,8 @@ public class CaptureUI implements FocusOverlayManager.FocusUI,
                     } else if (event.getAction() == MotionEvent.ACTION_UP) {
                         if (System.currentTimeMillis() - startTime < CLICK_THRESHOLD) {
                             for (View v1 : views) {
-                                v1.setBackgroundResource(R.drawable.scene_mode_view_border);
+                                v1.setActivated(v1 == v);
                             }
-                            View border = v.findViewById(R.id.border);
-                            border.setBackgroundResource(R.drawable.scene_mode_view_border_selected);
                             updateSceneModeIcon(j);
                             mSettingsManager.setValueIndex(SettingsManager.KEY_SCENE_MODE, j);
                             removeSceneAndFilterMenu(true);
@@ -683,11 +681,6 @@ public class CaptureUI implements FocusOverlayManager.FocusUI,
                     return true;
                 }
             });
-
-            View border = sceneBox.findViewById(R.id.border);
-            views[j] = border;
-            if (i == init)
-                border.setBackgroundResource(R.drawable.scene_mode_view_border_selected);
 
             imageView.setImageResource(thumbnails[i]);
             label.setText(entries[i]);
@@ -793,19 +786,16 @@ public class CaptureUI implements FocusOverlayManager.FocusUI,
                             mSettingsManager.setValueIndex(SettingsManager
                                     .KEY_COLOR_EFFECT, j);
                             for (View v1 : views) {
-                                v1.setBackground(null);
+                                v1.setActivated(v1 == v);
                             }
-                            ImageView image = (ImageView) v.findViewById(R.id.image);
-                            image.setBackgroundColor(HIGHLIGHT_COLOR);
                         }
                     }
                     return true;
                 }
             });
 
-            views[j] = imageView;
-            if (i == init)
-                imageView.setBackgroundColor(HIGHLIGHT_COLOR);
+            views[j] = filterBox;
+            filterBox.setActivated(i == init);
             TextView label = (TextView) filterBox.findViewById(R.id.label);
 
             imageView.setImageResource(thumbnails[i]);
@@ -948,7 +938,7 @@ public class CaptureUI implements FocusOverlayManager.FocusUI,
 
     public void animateFadeIn(View v) {
         ViewPropertyAnimator vp = v.animate();
-        vp.alpha(0.85f).setDuration(ANIMATION_DURATION);
+        vp.alpha(1f).setDuration(ANIMATION_DURATION);
         vp.start();
     }
 
