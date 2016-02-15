@@ -889,9 +889,13 @@ public class CameraSettings {
                     autoExposure, mParameters.getSupportedAutoexposure());
         }
 
-        if(videoSnapSize != null) {
-            filterUnsupportedOptions(group, videoSnapSize, getSupportedVideoSnapSizes(mParameters));
-            filterSimilarPictureSize(group, videoSnapSize);
+        if (videoSnapSize != null) {
+            if (CameraUtil.isVideoSnapshotSupported(mParameters)) {
+                filterUnsupportedOptions(group, videoSnapSize, getSupportedVideoSnapSizes(mParameters));
+                filterSimilarPictureSize(group, videoSnapSize);
+            } else {
+                removePreference(group, videoSnapSize.getKey());
+            }
         }
 
         if (histogram != null) {
