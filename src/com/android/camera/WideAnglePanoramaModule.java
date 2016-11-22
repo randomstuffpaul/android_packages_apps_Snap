@@ -694,7 +694,6 @@ public class WideAnglePanoramaModule
     }
 
     public void reportProgress() {
-        mUI.showUI();
         mUI.resetSavingProgress();
         Thread t = new Thread() {
             @Override
@@ -1146,6 +1145,13 @@ public class WideAnglePanoramaModule
             mCameraTexture.setOnFrameAvailableListener(this);
             mCameraDevice.setPreviewTexture(mCameraTexture);
         }
+        mCameraDevice.setOneShotPreviewCallback(mMainHandler,
+                new CameraManager.CameraPreviewDataCallback() {
+                    @Override
+                    public void onPreviewFrame(byte[] data, CameraProxy camera) {
+                        mUI.hidePreviewCover();
+                    }
+                });
         mCameraDevice.startPreview();
         mCameraState = PREVIEW_ACTIVE;
     }
