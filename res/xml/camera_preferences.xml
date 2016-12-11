@@ -272,7 +272,7 @@
             camera:defaultValue="@string/pref_camera_tsmakeup_default"
             camera:title="@string/pref_camera_tsmakeup_title"
             camera:entries="@array/pref_camera_tsmakeup_entries"
-            camera:singleIcon="@drawable/ic_ts_makeup_off"
+            camera:singleIcon="@drawable/ic_settings_beutification"
             camera:icons="@array/pref_ts_makeup_icons"
             camera:largeIcons="@array/pref_ts_makeup_icons"
             camera:entryValues="@array/pref_camera_tsmakeup_entryvalues" />
@@ -282,16 +282,18 @@
             camera:title="@string/pref_camera_tsmakeup_title"
             camera:entries="@array/pref_camera_tsmakeup_level_entries"
             camera:thumbnails="@array/tsmakeup_level_thumbnails"
-            camera:singleIcon="@drawable/ic_ts_makeup_off"
+            camera:singleIcon="@drawable/ic_settings_beutification"
             camera:entryValues="@array/pref_camera_tsmakeup_level_entryvalues" />
-    <ListPreference
+    <IconListPreference
             camera:key="pref_camera_tsmakeup_whiten"
             camera:defaultValue="@string/pref_camera_tsmakeup_level_default"
-            camera:title="@string/pref_camera_tsmakeup_title" />
-    <ListPreference
+            camera:title="@string/pref_camera_tsmakeup_title"
+            camera:singleIcon="@drawable/ic_settings_beutification" />
+    <IconListPreference
             camera:key="pref_camera_tsmakeup_clean"
             camera:defaultValue="@string/pref_camera_tsmakeup_level_default"
-            camera:title="@string/pref_camera_tsmakeup_title" />
+            camera:title="@string/pref_camera_tsmakeup_title"
+            camera:singleIcon="@drawable/ic_settings_beutification" />
     <IconListPreference
             camera:key="pref_camera_redeyereduction_key"
             camera:defaultValue="@string/pref_camera_redeyereduction_default"
@@ -396,7 +398,7 @@
             camera:entries="@array/pref_camera_manual_focus_entries"
             camera:entryValues="@array/pref_camera_manual_focus_entry_values" />
 
-    <ListPreference
+    <IconListPreference
             camera:key="pref_camera_instant_capture_key"
             camera:defaultValue="@string/pref_camera_instant_capture_default"
             camera:title="@string/pref_camera_instant_capture_title"
