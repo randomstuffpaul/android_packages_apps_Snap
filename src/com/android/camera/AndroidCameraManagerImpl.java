@@ -21,10 +21,12 @@ import static com.android.camera.util.CameraUtil.Assert;
 import java.io.IOException;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.hardware.Camera.AutoFocusCallback;
 import android.hardware.Camera.AutoFocusMoveCallback;
+import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.ErrorCallback;
 import android.hardware.Camera.FaceDetectionListener;
 import android.hardware.Camera.OnZoomChangeListener;
@@ -46,8 +48,12 @@ import android.os.ConditionVariable;
 import android.view.SurfaceView;
 import android.os.SystemProperties;
 
+import com.android.camera.app.CameraApp;
+
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
+
+import org.codeaurora.snapcam.R;
 
 /**
  * A class to implement {@link CameraManager} of the Android camera framework.
@@ -249,25 +255,40 @@ class AndroidCameraManagerImpl implements CameraManager {
             try {
                 switch (msg.what) {
                     case OPEN_CAMERA:
-                        try {
-                            Method openMethod = Class.forName("android.hardware.Camera").getMethod(
-                                    "openLegacy", int.class, int.class);
-                            mCamera = (android.hardware.Camera) openMethod.invoke(
-                                    null, msg.arg1, CAMERA_HAL_API_VERSION_1_0);
-                            if (sDualCameraMode && msg.arg1 == CameraHolder.instance().getBackCameraId()) {
-                                mCamera2 = (android.hardware.Camera) openMethod.invoke(
-                                        null, mAuxiliaryCameraId, CAMERA_HAL_API_VERSION_1_0);
-                                Log.d(TAG,"dualcamera mode open camera2");
+                        int cameraId = msg.arg1;
+                        Context context = CameraApp.getContext();
+
+                        boolean backCameraOpenLegacy = context.getResources().
+                                getBoolean(R.bool.back_camera_open_legacy);
+                        boolean frontCameraOpenLegacy = context.getResources().
+                                getBoolean(R.bool.front_camera_open_legacy);
+
+                        CameraInfo info = CameraHolder.instance().getCameraInfo()[cameraId];
+
+                        if (info.facing == CameraInfo.CAMERA_FACING_BACK && backCameraOpenLegacy ||
+                                info.facing == CameraInfo.CAMERA_FACING_FRONT && frontCameraOpenLegacy) {
+                            try {
+                                Method openMethod = Class.forName("android.hardware.Camera").getMethod(
+                                        "openLegacy", int.class, int.class);
+                                mCamera = (android.hardware.Camera) openMethod.invoke(
+                                        null, cameraId, CAMERA_HAL_API_VERSION_1_0);
+                                if (sDualCameraMode && msg.arg1 == CameraHolder.instance().getBackCameraId()) {
+                                    mCamera2 = (android.hardware.Camera) openMethod.invoke(
+                                            null, mAuxiliaryCameraId, CAMERA_HAL_API_VERSION_1_0);
+                                    Log.d(TAG,"dualcamera mode open camera2");
+                                }
+                            } catch (Exception e) {
+                                /* Retry with open if openLegacy doesn't exist/fails */
+                                Log.v(TAG, "openLegacy failed due to " + e.getMessage()
+                                        + ", using open instead");
+                                mCamera = android.hardware.Camera.open(cameraId);
+                                if (sDualCameraMode && msg.arg1 == CameraHolder.instance().getBackCameraId()) {
+                                    mCamera2 = android.hardware.Camera.open(mAuxiliaryCameraId);
+                                    Log.d(TAG,"dualcamera mode open camera2");
+                                }
                             }
-                        } catch (Exception e) {
-                            /* Retry with open if openLegacy doesn't exist/fails */
-                            Log.v(TAG, "openLegacy failed due to " + e.getMessage()
-                                    + ", using open instead");
-                            mCamera = android.hardware.Camera.open(msg.arg1);
-                            if (sDualCameraMode && msg.arg1 == CameraHolder.instance().getBackCameraId()) {
-                                mCamera2 = android.hardware.Camera.open(mAuxiliaryCameraId);
-                                Log.d(TAG,"dualcamera mode open camera2");
-                            }
+                        } else {
+                            mCamera = android.hardware.Camera.open(cameraId);
                         }
 
                         if (mCamera != null) {
@@ -299,7 +320,7 @@ class AndroidCameraManagerImpl implements CameraManager {
                             }
                         } else {
                             if (msg.obj != null) {
-                                ((CameraOpenErrorCallback) msg.obj).onDeviceOpenFailure(msg.arg1);
+                                ((CameraOpenErrorCallback) msg.obj).onDeviceOpenFailure(cameraId);
                             }
                         }
                         return;
