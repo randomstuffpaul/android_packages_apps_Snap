@@ -1718,6 +1718,9 @@ public class CaptureUI implements FocusOverlayManager.FocusUI,
         boolean changed = (width != mPreviewWidth) || (height != mPreviewHeight);
         mPreviewWidth = width;
         mPreviewHeight = height;
+        if (changed) {
+            showSurfaceView();
+        }
         return changed;
     }
 
