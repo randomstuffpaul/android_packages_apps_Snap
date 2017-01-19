@@ -1412,13 +1412,18 @@ public class PhotoModule
         }
     }
 
-    private byte[] flipJpeg(byte[] jpegData, int orientation) {
+    private byte[] flipJpeg(byte[] jpegData, int orientation, int jpegOrientation) {
         Bitmap srcBitmap = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
         Matrix m = new Matrix();
         if(orientation == 270) {
             m.preScale(-1, 1);
         } else { //if it's 90
-            m.preScale(1, -1);
+            // Judge whether the picture or phone is horizontal screen
+            if (jpegOrientation == 0 || jpegOrientation == 180) {
+                m.preScale(-1, 1);
+            } else { // the picture or phone is Vertical screen
+                m.preScale(1, -1);
+            }
         }
         Bitmap dstBitmap = Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.getWidth(), srcBitmap.getHeight(), m, false);
         dstBitmap.setDensity(DisplayMetrics.DENSITY_DEFAULT);
@@ -1606,7 +1611,7 @@ public class PhotoModule
                             .findPreference(CameraSettings.KEY_SELFIE_MIRROR);
                     if (selfieMirrorPref != null && selfieMirrorPref.getValue() != null &&
                             selfieMirrorPref.getValue().equalsIgnoreCase("enable")) {
-                        jpegData = flipJpeg(jpegData, info.orientation);
+                        jpegData = flipJpeg(jpegData, info.orientation, orientation);
                         jpegData = addExifTags(jpegData, orientation);
                     }
                 } else {
