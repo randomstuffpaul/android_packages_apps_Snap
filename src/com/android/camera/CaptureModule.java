@@ -285,6 +285,7 @@ public class CaptureModule implements CameraModule, PhotoController,
     private int mHighSpeedCaptureRate;
 
     private static final int SELFIE_FLASH_DURATION = 680;
+    private static final long EXPOSURE_TIME_DEFAULT = 1000000000L/30;
 
     private MediaActionSound mSound;
 
@@ -3053,9 +3054,14 @@ public class CaptureModule implements CameraModule, PhotoController,
     private void applyIso(CaptureRequest.Builder request) {
         String value = mSettingsManager.getValue(SettingsManager.KEY_ISO);
         if (value == null) return;
-        if (value.equals("auto")) return;
-        int intValue = Integer.parseInt(value);
-        request.set(CaptureRequest.SENSOR_SENSITIVITY, intValue);
+        if (value.equals("auto")) {
+            request.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON);
+        } else {
+            int intValue = Integer.parseInt(value);
+            request.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_OFF);
+            request.set(CaptureRequest.SENSOR_SENSITIVITY, intValue);
+            request.set(CaptureRequest.SENSOR_EXPOSURE_TIME, EXPOSURE_TIME_DEFAULT);
+        }     
     }
 
     private void applyColorEffect(CaptureRequest.Builder request) {
