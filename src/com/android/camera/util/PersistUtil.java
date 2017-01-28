@@ -50,8 +50,6 @@ public class PersistUtil {
             SystemProperties.getInt("persist.camera.longshot.shotnum", 50);
     private static final String PERSIST_CAMERA_PREVIEW_SIZE =
             SystemProperties.get("persist.camera.preview.size", "");
-    private static final boolean PERSIST_CAMERA_CAMERA2 =
-            SystemProperties.getBoolean("persist.camera.camera2", false);
     private static final boolean PERSIST_CAMERA_ZSL =
             SystemProperties.getBoolean("persist.camera.zsl.disabled", false);
     private static final int PERSIST_CAMERA_CANCEL_TOUCHFOCUS_DELAY =
@@ -97,10 +95,6 @@ public class PersistUtil {
             }
         }
         return result;
-    }
-
-    public static boolean getCamera2Mode() {
-        return PERSIST_CAMERA_CAMERA2;
     }
 
     public static boolean getCameraZSLDisabled() {
