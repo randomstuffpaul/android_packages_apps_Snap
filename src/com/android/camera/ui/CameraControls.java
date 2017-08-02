@@ -331,6 +331,7 @@ public class CameraControls extends RotatableLayout {
             mReviewDoneButton = null;
         }
         layoutRemaingPhotos();
+        mRemainingPhotos.setVisibility(View.VISIBLE);
     }
 
     @Override
