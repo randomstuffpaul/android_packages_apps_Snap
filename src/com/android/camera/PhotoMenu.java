@@ -1072,7 +1072,6 @@ public class PhotoMenu extends MenuController
                             for (View v1 : views) {
                                 v1.setActivated(v1 == v);
                             }
-                            animateSlideOutPreviewMenu();
                         }
 
                     }
