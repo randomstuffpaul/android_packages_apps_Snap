@@ -460,6 +460,7 @@ public class WideAnglePanoramaModule
         Log.d(TAG, "camera preview h = "
                     + mCameraPreviewHeight + " , w = " + mCameraPreviewWidth);
         parameters.setPreviewSize(mCameraPreviewWidth, mCameraPreviewHeight);
+        mUI.setPreviewSize(mCameraPreviewWidth, mCameraPreviewHeight);
 
         List<int[]> frameRates = parameters.getSupportedPreviewFpsRange();
         int last = frameRates.size() - 1;
